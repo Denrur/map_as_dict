@@ -1,6 +1,10 @@
 from bearlibterminal import terminal as blt
 from camera import Camera
+<<<<<<< HEAD
 from chunks import add_new_chunks
+=======
+from chunks import add_new_chunks, generate_chunk
+>>>>>>> b7729425a6b1c8296375953774f4c70890c53a2c
 from death_functions import kill_player, kill_monster
 from entity import Entity
 from fighter import Fighter
@@ -18,7 +22,6 @@ import rpas
 
 def main():
     print("Start")
-
     blt.set("window: size=80x25, cellsize=auto;""input : filter={keyboard}")
     blt.color("white")
     fighter_component = Fighter(hp=30, defense=3, power=5)
@@ -35,6 +38,7 @@ def main():
     entities = dict()
     items = dict()
     corpses = dict()
+
     game_map = GameMap(0, 0)
 
     chunk_size = 50
@@ -122,10 +126,10 @@ def main():
         # print("input delay: %s" % (time.time() - start))
         cx = (player.x // chunk_size) * chunk_size
         cy = (player.y // chunk_size) * chunk_size
+
         add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
                        max_monsters_per_chunk, max_items_per_chunk)
         print(len(game_map.chunks))
-
 
 if __name__ == "__main__":
     main()

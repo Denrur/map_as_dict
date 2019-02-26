@@ -7,6 +7,7 @@ import itertools
 
 def generate_chunk(x, y, size, game_map, entities, items,
                    max_monsters, max_items):
+
     assert x % size == 0
     assert y % size == 0
 
@@ -21,7 +22,6 @@ def generate_chunk(x, y, size, game_map, entities, items,
     persistance = 0.3
     lactunarity = 1.1
     height_map = dict()
-
     for j in range(x, x + size):
         for k in range(y, y + size):
             # print(j, k)
@@ -29,6 +29,7 @@ def generate_chunk(x, y, size, game_map, entities, items,
                                         octaves,
                                         persistance,
                                         lactunarity)
+
             if noise_value > max_noise:
                 max_noise = noise_value
             elif noise_value < min_noise:
@@ -48,6 +49,7 @@ def generate_chunk(x, y, size, game_map, entities, items,
 
     place_entities(x, y, size, entities, items, game_map,
                    max_monsters, max_items)
+
 
 
 def add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
