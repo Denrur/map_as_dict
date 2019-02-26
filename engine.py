@@ -1,10 +1,6 @@
 from bearlibterminal import terminal as blt
 from camera import Camera
-<<<<<<< HEAD
 from chunks import add_new_chunks
-=======
-from chunks import add_new_chunks, generate_chunk
->>>>>>> b7729425a6b1c8296375953774f4c70890c53a2c
 from death_functions import kill_player, kill_monster
 from entity import Entity
 from fighter import Fighter
