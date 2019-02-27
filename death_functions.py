@@ -25,7 +25,7 @@ def kill_monster(monster, entities, corpses):
             '{0} is dead!'.format(monster.name.capitalize()),
             'orange')
 
-        monster.char = '%'
+        monster.char = '[U+8028]'
         monster.color = 'red'
         monster.blocks = False
         monster.fighter = None

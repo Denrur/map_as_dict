@@ -38,6 +38,8 @@ class Camera:
 
     def to_map_coordinates(self, x, y):
         # Конвертируем координаты на экране в координаты на карте
-        (x, y) = (x + self.x, y + self.y)
-
-        return (x, y)
+        (map_x, map_y) = (x + self.x, y + self.y)
+#        print("Camera_x ", self.x)
+#        print("Camera_y ", self.y)
+#        print("map_cor", map_x, map_y)
+        return (map_x, map_y)

@@ -39,8 +39,7 @@ class Entity():
         dy = int(round(dy / distance))
         x = self.x + dx
         y = self.y + dy
-        if ((not (x, y) in entites) and
-                game_map.terrain[(x, y)].name != 'wall'):
+        if (not (x, y) in entites) and (not (x, y) in game_map.terrain):
             self.move(dx, dy)
 
     def distance_to(self, other):

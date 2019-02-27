@@ -18,17 +18,23 @@ import rpas
 
 def main():
     print("Start")
-    blt.set("window: size=80x25, cellsize=auto;""input : filter={keyboard}")
+    # blt.set("window: size=80x25, cellsize=auto;""input : filter={keyboard}")
     blt.color("white")
     fighter_component = Fighter(hp=30, defense=3, power=5)
+
     player = Entity(
         27,
         27,
-        '@',
-        'red',
+        '[U+1090]',
+        'white',
         'player',
         fighter=fighter_component)
-
+    health_potion = Entity(
+        25,
+        25,
+        '[U+7012]',
+        'green',
+        'healing')
     print("Generating map")
     start = time.time()
     entities = dict()
@@ -39,22 +45,22 @@ def main():
 
     chunk_size = 50
 
-    max_monsters_per_chunk = 10
-    max_items_per_chunk = 7
+    max_monsters_per_chunk = 50
+    max_items_per_chunk = 30
     cx = player.x // chunk_size * chunk_size
     cy = player.y // chunk_size * chunk_size
     add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
                    max_monsters_per_chunk, max_items_per_chunk)
 
     # print(game_map.chunks)
-
+    items[(health_potion.x, health_potion.y)] = health_potion
     entities[(player.x, player.y)] = player
     print(time.time() - start)
     print("BPS")
     # start = time.time()
     # make_bsp(game_map, 20, 5, player, entities, items, 3, 1)
-    blt.composition(True)
-    camera = Camera(60, 22, 0, 0)
+    # blt.composition(True)
+    camera = Camera(40, 20, 0, 0)
     blt.open()
     # print(time.time() - start)
 
@@ -66,16 +72,24 @@ def main():
     fov = rpas.FOVCalc()
 
     while True:
+        mouse_x = blt.state(blt.TK_MOUSE_X)
+        mouse_y = blt.state(blt.TK_MOUSE_Y)
+        mouse = (mouse_x, mouse_y)
+        blt.composition(True)
         # set_trace()
         blt.clear()
+        # blt.bkcolor('green')
         # start = time.time()
         fov_cells = fov.calc_visible_cells_from(
             player.x, player.y, 20, is_unobstruct)
+        # print(fov_cells)
         # recompute_fov(game_map, player.x, player.y, radius=5)
         # print(game_map.fov)
-        render_all(game_map, camera, player,
+        render_all(game_map, camera, player, mouse,
                    entities, items, corpses,
                    fov_cells)
+        # blt.put(2, 1, 0x2000)
+        # blt.put(1, 1, 0x1000)
         # print(player.x)
         # print(player.y)
         blt.refresh()
@@ -86,14 +100,14 @@ def main():
         exit = action.get('exit')
 
         player_turn_results = []
-        print(len(game_map.terrain))
-        print(len(game_map.water))
+        # print(len(game_map.terrain))
+        # print(len(game_map.water))
         if move:
             dx, dy = move
             dest_x = player.x + dx
             dest_y = player.y + dy
-            # if (dest_x, dest_y) in game_map.terrain:
-            #     continue
+            if (dest_x, dest_y) in game_map.terrain:
+                continue
             if entities.get((dest_x, dest_y)):
                 target = entities.get((dest_x, dest_y))
                 attack_results = player.fighter.attack(target)
@@ -118,6 +132,22 @@ def main():
                 else:
                     message = kill_monster(dead_entity, entities, corpses)
                 print(message.text)
+        print("Entites ", len(entities))
+        i = 0
+        entities_done = set()
+        for entity in entities:
+            # print(entities[entity])
+            if (entities[entity] != player and
+                    not (entity in entities_done) and
+                    entity in fov_cells):
+                enemy = entities.pop(entity)
+
+                enemy.move_towards(player.x, player.y, game_map, entities)
+                entities[(enemy.x, enemy.y)] = enemy
+                entities_done.add((enemy.x, enemy.y))
+                i += 1
+        print(i)
+
 
         # print("input delay: %s" % (time.time() - start))
         cx = (player.x // chunk_size) * chunk_size
@@ -125,7 +155,9 @@ def main():
 
         add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
                        max_monsters_per_chunk, max_items_per_chunk)
-        print(len(game_map.chunks))
+        # print(len(game_map.chunks))
+        # print(len(items))
+
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ from entity import Entity
 import noise
 from place_entities import place_entities
 import itertools
+from random import randint
 
 
 def generate_chunk(x, y, size, game_map, entities, items,
@@ -41,15 +42,16 @@ def generate_chunk(x, y, size, game_map, entities, items,
             max_noise - min_noise)
 
         if height_map[(j, k)] < 0.1:
-            game_map.water[(j, k)] = Entity(j, k, '~', 'blue', 'water')
+            game_map.water[(j, k)] = Entity(j, k, '[U+504A]', 'white', 'water')
         elif height_map[(j, k)] < 0.7:
             pass
         elif height_map[(j, k)] < 1:
-            game_map.terrain[(j, k)] = Entity(j, k, '#', 'grey', 'wall')
-
+            walls = ['[U+2140]', '[U+2141]', '[U+2142]']
+            r = randint(0, 2)
+            game_map.terrain[(j, k)] = Entity(j, k, walls[r], 'white', 'wall')
+    # print("size ", size)
     place_entities(x, y, size, entities, items, game_map,
                    max_monsters, max_items)
-
 
 
 def add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
@@ -57,5 +59,5 @@ def add_new_chunks(cx, cy, chunk_size, game_map, entities, items,
 
     for x, y in itertools.product([cx - chunk_size, cx, cx + chunk_size],
                                   [cy - chunk_size, cy, cy + chunk_size]):
-            generate_chunk(x, y, chunk_size, game_map, entities, items,
-                           max_monsters, max_items)
+        generate_chunk(x, y, chunk_size, game_map, entities, items,
+                       max_monsters, max_items)
